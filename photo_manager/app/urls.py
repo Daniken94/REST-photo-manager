@@ -4,9 +4,18 @@ from rest_framework import routers
 
 from .views import PhotoViewSet
 
+
 router = routers.DefaultRouter()
-router.register(r'photo', PhotoViewSet)
+router.register(r'photo', PhotoViewSet, basename="queryset")
 
 urlpatterns = [
     path('api/', include(router.urls))
 ]
+
+
+# from .views import photo_list, photo_add
+
+# urlpatterns = [
+#     path('api/', photo_list),
+#     path('api/new/', photo_add)
+# ]

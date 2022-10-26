@@ -1,5 +1,8 @@
 from django.contrib import admin
-from . import models
+from .models import Photo
 
 # Register your models here.
-admin.site.register(models.Photo)
+class photoAdmin(admin.ModelAdmin):
+    list_display=['title', 'album_ID', 'width', 'height', 'dom_colour', 'image']
+
+admin.site.register(Photo, photoAdmin)
