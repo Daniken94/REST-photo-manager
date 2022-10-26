@@ -9,3 +9,4 @@ class Photo(models.Model):
     width = models.IntegerField
     height = models.IntegerField
     dom_colour = models.IntegerField
+    image = models.ImageField(upload_to="photos")
