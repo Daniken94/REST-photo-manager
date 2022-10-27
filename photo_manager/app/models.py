@@ -14,11 +14,12 @@ import scipy.cluster
 
 class Photo(models.Model):
     title = models.CharField(max_length=120)
-    albumId = models.IntegerField(default=1)
+    albumid = models.IntegerField(default=1)
     width = models.PositiveIntegerField(blank=True, null=True)
     height = models.PositiveIntegerField(blank=True, null=True)
-    dom_colour = models.CharField(max_length=80, blank=True)
-    image = models.ImageField(upload_to="photos", height_field='height', width_field='width')
+    dom_colour = models.CharField(max_length=80, blank=True, null=True)
+    image = models.ImageField(upload_to="photos", height_field='height', width_field='width', blank=True, null=True)
+    url = models.CharField(max_length=500, blank=True)
 
 
     def save(self, *args, **kwargs):
