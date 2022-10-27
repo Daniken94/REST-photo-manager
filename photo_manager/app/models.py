@@ -14,14 +14,14 @@ import scipy.cluster
 
 class Photo(models.Model):
     title = models.CharField(max_length=120)
-    album_ID = models.IntegerField(default=1)
+    albumId = models.IntegerField(default=1)
     width = models.PositiveIntegerField(blank=True, null=True)
     height = models.PositiveIntegerField(blank=True, null=True)
     dom_colour = models.CharField(max_length=80, blank=True)
     image = models.ImageField(upload_to="photos", height_field='height', width_field='width')
 
 
-    def save(self):
+    def save(self, *args, **kwargs):
         NUM_CLUSTERS = 5
 
         im = Image.open(self.image).resize((150, 150))
@@ -36,7 +36,7 @@ class Photo(models.Model):
         colour = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
 
         self.dom_colour = f'#{colour}'
-        super(Photo, self).save()
+        super(Photo, self).save(*args, **kwargs)
 
 
     def __str__(self):
