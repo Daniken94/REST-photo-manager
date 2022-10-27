@@ -7,7 +7,7 @@ from rest_framework import serializers
 class PhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Photo
-        fields = ['title', 'album_ID', 'width', 'height', 'dom_colour', 'image']
+        fields = ['id', 'title', 'album_ID', 'width', 'height', 'dom_colour', 'image']
 
         def create(self, data):
             return Photo.objects.create(**data)

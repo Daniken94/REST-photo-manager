@@ -2,20 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import PhotoViewSet
+from .views import PhotoListAPIView, PhotoDetailAPIView
 
-
-router = routers.DefaultRouter()
-router.register(r'photo', PhotoViewSet, basename="queryset")
 
 urlpatterns = [
-    path('api/', include(router.urls))
+    path("", PhotoListAPIView.as_view(), name='list_create_view'),
+    path("<int:pk>/", PhotoDetailAPIView.as_view(), name='details')
 ]
-
-
-# from .views import photo_list, photo_add
-
-# urlpatterns = [
-#     path('api/', photo_list),
-#     path('api/new/', photo_add)
-# ]
