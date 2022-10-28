@@ -52,7 +52,7 @@ def save_object():
     """
     Load data from JSON file
     """
-    file = os.path.abspath('/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos3.json')
+    file = os.path.abspath('/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos.json')
     json_data=open(file).read()
     json_obj = json.loads(json_data)
 
@@ -108,7 +108,7 @@ def save_object():
         img = Image.open(dst_path)
 
         # Get image path to save in DB
-        localdata = f"photos/{title_dow}"
+        localdata = f"photos/{title_dow_jpeg}"
 
         # Create cursor
         cursor.execute("INSERT INTO app_photo (title, albumId, width, height, dom_colour, image, url) VALUES (%s, %s, %s, %s, %s, %s, %s)", (title, albumId, img.width, img.height, dom_colour, localdata, url))
