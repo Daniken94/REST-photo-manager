@@ -52,7 +52,7 @@ def save_object():
     """
     Load data from JSON file
     """
-    file = os.path.abspath('/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos3.json')
+    file = os.path.abspath('/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos.json')
     json_data=open(file).read()
     json_obj = json.loads(json_data)
 
@@ -87,23 +87,23 @@ def save_object():
         url_download = url + ".png"
 
         # Replace files to correct place after download
-        patch_raw = "/home/kamil/workplace/REST-photo-manager/photo_manager/"
-        patch_photo = "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/"
-        patch_photo_png = "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/"
-        src_path = patch_raw + title_dow
-        dst_path = patch_photo_png + title_dow
+        photo_path = "/home/kamil/workplace/REST-photo-manager/photo_manager/photo/"
+        photo_path_raw = "/home/kamil/workplace/REST-photo-manager/photo_manager/"
+        photo_path_png = "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/"
+        src_path = photo_path_raw + title_dow
+        dst_path = photo_path_png + title_dow
 
         # Use function to download images from API
         save_image(url_download, title_dow, src_path, dst_path)
 
         # Images from API has
-        Image.open(patch_photo_png + title_dow).convert('RGB').save(patch_photo_png + title_dow)
-        change_format = Image.open(patch_photo_png + title_dow, mode='r', formats=None)
-        change_format.save(patch_photo + title_dow_jpeg, format=None)
+        Image.open(photo_path_png + title_dow).convert('RGB').save(photo_path_png + title_dow)
+        change_format = Image.open(photo_path_png + title_dow, mode='r', formats=None)
+        change_format.save(photo_path + title_dow_jpeg, format=None)
 
         # Use function to get color from image
         dom_colour = color(dst_path)
-
+        
         # Use Image to catch width and height
         img = Image.open(dst_path)
 
@@ -113,14 +113,13 @@ def save_object():
         # Create cursor
         cursor.execute("INSERT INTO app_photo (title, albumId, width, height, dom_colour, image, url) VALUES (%s, %s, %s, %s, %s, %s, %s)", (title, albumId, img.width, img.height, dom_colour, localdata, url))
 
-        # Delete all from png
-        dir = '/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png'
-        for f in os.listdir(dir):
-            os.remove(os.path.join(dir, f))
 
     # Close connection
     conn.commit()
     conn.close()
 
-save_object()
+    # Delete all from png
+    for f in os.listdir(photo_path_png):
+        os.remove(os.path.join(dir, f))
 
+save_object()
