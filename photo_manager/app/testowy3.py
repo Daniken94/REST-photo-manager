@@ -11,13 +11,23 @@ import scipy.misc
 import scipy.cluster
 
 
+# change_format = Image.open("/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks.png")
+# change_format.save(f"/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks.jpg")
 
+
+Image.open('/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks.png').convert('RGB').save('/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks22.png')
+change_format = Image.open("/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks22.png", mode='r', formats=None)
+change_format.save("/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks.jpeg", format=None)
 
 def save():
     NUM_CLUSTERS = 5
 
-    im = Image.open("/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/bunny.jpg").resize((150, 150))
+    # im = Image.open("/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/bunny.jpg").resize((150, 150))
+    im = Image.open("/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/indeks.jpeg").resize((150, 150))
     ar = np.asarray(im)
+    print("*********************")
+    print(ar)
+    print("*********************")
     shape = ar.shape
     ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
     codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
