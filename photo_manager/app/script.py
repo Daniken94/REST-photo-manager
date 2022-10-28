@@ -18,6 +18,9 @@ import requests
 
 
 def save_image(url, title_dow, src_path, dst_path):
+    """
+    Function save images from external api
+    """
     response = requests.get(url, stream=True)
     with open(title_dow, 'wb') as out_file:
         shutil.copyfileobj(response.raw, out_file)
@@ -26,6 +29,9 @@ def save_image(url, title_dow, src_path, dst_path):
 
 
 def color(path):
+        """
+        Function for load dominant color from image. Image must by .jpg/.jpeg format.
+        """
         NUM_CLUSTERS = 5
 
         im = Image.open(path).resize((150, 150))
@@ -43,6 +49,9 @@ def color(path):
 
 
 def save_object():
+    """
+    Load data from JSON file
+    """
     file = os.path.abspath('/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos2.json')
     json_data=open(file).read()
     json_obj = json.loads(json_data)
@@ -54,7 +63,7 @@ def save_object():
             else:
                 return val
 
-
+    # Connect to database
     conn = psycopg2.connect(
         host="localhost",
         database="photo_db",
@@ -64,36 +73,52 @@ def save_object():
     cursor = conn.cursor()
 
     for i, item in enumerate(json_obj):
+        # Loop for iterate by each object in JSON file
+        # Get title
         title = validate_string(item.get("title", None))
         title_dow = title + ".png"
         title_dow_jpeg = title + ".jpeg"
 
-        title = validate_string(item.get("title", None))
-        title_dow = title + ".png"
-        title_dow_jpeg = title + ".jpeg"
-        src_path = f"/home/kamil/workplace/REST-photo-manager/photo_manager/{title_dow}"
-        dst_path = f"/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/{title_dow}"
+        # Get albumId
         albumId = int(validate_string(item.get("albumId", None)))
+
+        # Get url
         url = validate_string(item.get("url", None))
         url_download = url + ".png"
+
+        # Replace files to correct place after download
+        photo_path_raw = "/home/kamil/workplace/REST-photo-manager/photo_manager/"
+        photo_path = "/home/kamil/workplace/REST-photo-manager/photo_manager/photos/"
+        photo_path_png = "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/"
+        src_path = photo_path_raw + title_dow
+        dst_path = photo_path_png + title_dow
+
+        # Use function to download images from API
         save_image(url_download, title_dow, src_path, dst_path)
 
-        Image.open(f'/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/{title_dow}').convert('RGB').save(f'/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/{title_dow}')
-        change_format = Image.open(f"/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/{title_dow}", mode='r', formats=None)
-        change_format.save(f"/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/{title_dow_jpeg}", format=None)
+        # Images from API has
+        Image.open(photo_path_png + title_dow).convert('RGB').save(photo_path_png + title_dow)
+        change_format = Image.open(photo_path_png + title_dow, mode='r', formats=None)
+        change_format.save(photo_path + title_dow_jpeg, format=None)
 
+        # Use function to get color from image
         dom_colour = color(dst_path)
         img = Image.open(dst_path)
 
+        # Get image path to save in DB
         localdata = f"photos/{title_dow}"
+
+        # Create cursor
         cursor.execute("INSERT INTO app_photo (title, albumId, width, height, dom_colour, image, url) VALUES (%s, %s, %s, %s, %s, %s, %s)", (title, albumId, img.width, img.height, dom_colour, localdata, url))
 
-        dir = '/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png'
-        for f in os.listdir(dir):
-            os.remove(os.path.join(dir, f))
 
+    # Close connection
     conn.commit()
     conn.close()
+
+    # Delete all from png dictionary
+    for f in os.listdir(photo_path_png):
+        os.remove(os.path.join(dir, f))
 
 save_object()
 

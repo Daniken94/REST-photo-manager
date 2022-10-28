@@ -10,7 +10,7 @@ import scipy
 import scipy.misc
 import scipy.cluster
 
-
+# Database model for photo storage
 
 class Photo(models.Model):
     title = models.CharField(max_length=120)
@@ -23,6 +23,9 @@ class Photo(models.Model):
 
 
     def save(self, *args, **kwargs):
+        """
+        Function for load dominant color from image. Image must by .jpg/.jpeg format
+        """
         NUM_CLUSTERS = 5
 
         im = Image.open(self.image).resize((150, 150))
