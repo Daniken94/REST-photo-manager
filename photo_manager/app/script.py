@@ -22,53 +22,53 @@ def save_image(url, title_dow, src_path, dst_path):
     Function save images from external api
     """
     response = requests.get(url, stream=True)
-    with open(title_dow, 'wb') as out_file:
+    with open(title_dow, "wb") as out_file:
         shutil.copyfileobj(response.raw, out_file)
         shutil.move(src_path, dst_path)
     del response
 
 
 def color(path):
-        """
-        Function for load dominant color from image. Image must by .jpg/.jpeg format.
-        """
-        NUM_CLUSTERS = 5
+    """
+    Function for load dominant color from image. Image must by .jpg/.jpeg format.
+    """
+    NUM_CLUSTERS = 5
 
-        im = Image.open(path).resize((150, 150))
-        ar = np.asarray(im)
-        shape = ar.shape
-        ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
-        codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
-        vecs, dist = scipy.cluster.vq.vq(ar, codes)         
-        counts, bins = scipy.histogram(vecs, len(codes))    
-        index_max = scipy.argmax(counts)                    
-        peak = codes[index_max]
-        colour = binascii.hexlify(bytearray(int(c) for c in peak)).decode('ascii')
-        col = f'#{colour}'
-        return col
+    im = Image.open(path).resize((150, 150))
+    ar = np.asarray(im)
+    shape = ar.shape
+    ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
+    codes, dist = scipy.cluster.vq.kmeans(ar, NUM_CLUSTERS)
+    vecs, dist = scipy.cluster.vq.vq(ar, codes)
+    counts, bins = scipy.histogram(vecs, len(codes))
+    index_max = scipy.argmax(counts)
+    peak = codes[index_max]
+    colour = binascii.hexlify(bytearray(int(c) for c in peak)).decode("ascii")
+    col = f"#{colour}"
+    return col
 
 
 def save_object():
     """
     Load data from JSON file
     """
-    file = os.path.abspath('/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos2.json')
-    json_data=open(file).read()
+    file = os.path.abspath(
+        "/home/kamil/workplace/REST-photo-manager/photo_manager/app/fixtures/photos2.json"
+    )
+    json_data = open(file).read()
     json_obj = json.loads(json_data)
 
     def validate_string(val):
         if val != None:
             if type(val) is int:
-                return str(val).encode('utf-8')
+                return str(val).encode("utf-8")
             else:
                 return val
 
     # Connect to database
     conn = psycopg2.connect(
-        host="localhost",
-        database="photo_db",
-        user="postgres",
-        password="postgres")
+        host="localhost", database="photo_db", user="postgres", password="postgres"
+    )
 
     cursor = conn.cursor()
 
@@ -89,7 +89,9 @@ def save_object():
         # Replace files to correct place after download
         photo_path_raw = "/home/kamil/workplace/REST-photo-manager/photo_manager/"
         photo_path = "/home/kamil/workplace/REST-photo-manager/photo_manager/photos/"
-        photo_path_png = "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/"
+        photo_path_png = (
+            "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos_png/"
+        )
         src_path = photo_path_raw + title_dow
         dst_path = photo_path_png + title_dow
 
@@ -97,8 +99,10 @@ def save_object():
         save_image(url_download, title_dow, src_path, dst_path)
 
         # Images from API has
-        Image.open(photo_path_png + title_dow).convert('RGB').save(photo_path_png + title_dow)
-        change_format = Image.open(photo_path_png + title_dow, mode='r', formats=None)
+        Image.open(photo_path_png + title_dow).convert("RGB").save(
+            photo_path_png + title_dow
+        )
+        change_format = Image.open(photo_path_png + title_dow, mode="r", formats=None)
         change_format.save(photo_path + title_dow_jpeg, format=None)
 
         # Use function to get color from image
@@ -109,8 +113,10 @@ def save_object():
         localdata = f"photos/{title_dow}"
 
         # Create cursor
-        cursor.execute("INSERT INTO app_photo (title, albumId, width, height, dom_colour, image, url) VALUES (%s, %s, %s, %s, %s, %s, %s)", (title, albumId, img.width, img.height, dom_colour, localdata, url))
-
+        cursor.execute(
+            "INSERT INTO app_photo (title, albumId, width, height, dom_colour, image, url) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (title, albumId, img.width, img.height, dom_colour, localdata, url),
+        )
 
     # Close connection
     conn.commit()
@@ -120,5 +126,5 @@ def save_object():
     for f in os.listdir(photo_path_png):
         os.remove(os.path.join(dir, f))
 
-save_object()
 
+save_object()

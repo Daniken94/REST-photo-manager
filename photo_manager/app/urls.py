@@ -6,6 +6,6 @@ from .views import PhotoListAPIView, PhotoDetailAPIView
 
 
 urlpatterns = [
-    path("", PhotoListAPIView.as_view(), name='list_create_view'),
-    path("<int:pk>/", PhotoDetailAPIView.as_view(), name='details')
+    path("", PhotoListAPIView.as_view(), name="list_create_view"),
+    path("<int:pk>/", PhotoDetailAPIView.as_view(), name="details"),
 ]
