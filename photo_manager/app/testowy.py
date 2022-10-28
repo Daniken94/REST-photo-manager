@@ -1,24 +1,22 @@
 import os, json, postgres, psycopg2
 import urllib.request
 
-import requests # request img from web
-import shutil # save img locally
-
-
-# url = "https://via.placeholder.com/600/92c952"
-
-
-
-# file_path = "/home/kamil/workplace/REST-photo-manager/photo_manager/media"
-# url = "https://via.placeholder.com/600/92c952"
-# file_name = "test.jpg"
-
-urllib.request.urlretrieve("https://via.placeholder.com/600/92c952", "local-filename.jpg")
 
 
 
 
+import shutil
 
+import requests
+
+url = 'https://via.placeholder.com/600/92c952.png'
+response = requests.get(url, stream=True)
+with open('img.png', 'wb') as out_file:
+    shutil.copyfileobj(response.raw, out_file)
+    src_path = "/home/kamil/workplace/REST-photo-manager/photo_manager/img.png"
+    dst_path = "/home/kamil/workplace/REST-photo-manager/photo_manager/media/photos/img.png"
+    shutil.move(src_path, dst_path)
+del response
 
 
 
